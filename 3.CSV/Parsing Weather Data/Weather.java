@@ -82,7 +82,7 @@ public class Weather {
             }  
         else{
             double curTemp = Double.parseDouble(curRow.get("TemperatureF"));
-            double minTemp= Double.parseDouble(minSoFar.get("TemperatureF"));
+            double minTemp = Double.parseDouble(minSoFar.get("TemperatureF"));
                 
                 if (curTemp<minTemp && curTemp!=-9999){
                     minSoFar=curRow;
