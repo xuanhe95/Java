@@ -115,7 +115,7 @@ public class PerimeterAssignmentRunner {
         System.out.println("perimeter = " + length);
         System.out.println("number = " + total);
         System.out.println("average lenth = " + alength);
-        System.out.println("largest side = " + lgside);
+        System.out.println("longest side = " + lgside);
         System.out.println("largest X = " + lgx);
     }
     

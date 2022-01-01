@@ -39,8 +39,10 @@ public class babyNames {
         int sum=0;
         for (CSVRecord curRow:parser){
             if(gender.equals(curRow.get(1))){
+                System.out.println(curRow.get(0));
                 sum++;
                 if(curRow.get(0).equals(name)){
+                
                 return sum;
                 }            
             }
@@ -123,7 +125,7 @@ public class babyNames {
         double totalFiles=0;
         for (File f:dr.selectedFiles()){
             FileResource fr=new FileResource(f);
-            CSVParser parser=fr.getCSVParser();
+            CSVParser parser=fr.getCSVParser(false);
             totalRank+=getRankWithoutYear(parser,name,gender);
             totalFiles+=1;
         }
@@ -136,15 +138,21 @@ public class babyNames {
     public int getTotalBirthsRankedHigher(int year,String name,String gender){
         String fileName="yob"+year+".csv";
         FileResource fr=new FileResource("us_babynames/us_babynames_by_year/"+fileName);
-        CSVParser parser=fr.getCSVParser();
+        CSVParser parser=fr.getCSVParser(false);
         int higherNumber=0;
         int rank=getRank(year,name,gender);
         int curRank=1;
+
         for(CSVRecord curRow:parser){
             
             if(rank>curRank && curRow.get(1).equals(gender)){
+                System.out.println(curRow.get(2));
+                System.out.println(curRank);
                 curRank++;
+                System.out.println(curRank);
+                System.out.println(curRow.get(2));
                 higherNumber+=Integer.parseInt(curRow.get(2));
+                System.out.println(higherNumber);
             }
         
         }

@@ -126,13 +126,11 @@ public class Weather {
         double sumTemp=0;
         for (CSVRecord curRow:parser){
             Double humidity=Double.parseDouble(curRow.get("Humidity"));
-        
             if (humidity>value){
                  double temp = Double.parseDouble(curRow.get("TemperatureF"));
                  sumTemp+=temp;
                  sum++;
                 }
-            
             }
         if(sumTemp==0){return 0;}    
             
@@ -207,8 +205,6 @@ public class Weather {
         CSVRecord csv = lowestHumidityInManyFiles();
         String time=csv.get("DateUTC");
         System.out.println("Lowest Humidity was "+csv.get("Humidity")+ " at "+ time);
-    
-    
     }
     
     
