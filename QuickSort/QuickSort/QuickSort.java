@@ -6,6 +6,7 @@
  * @版本（一个版本号或者一个日期）
  */
 import java.util.*;
+import edu.duke.*;
 
 public class QuickSort {
     public static List<Integer> sort(List<Integer> lst,int left,int right){
@@ -24,7 +25,7 @@ public class QuickSort {
             sort(lst,i+1,right);//向右侧递归
             return lst;
    
-    }
+    }    
     
         public static List<Integer> swap(List<Integer> lst,int item1,int item2,int idx1,int idx2){
         lst.set(idx1,item2);
@@ -43,7 +44,6 @@ public class QuickSort {
         System.out.println(sort(lst2,0,lst2.size()-1));
         System.out.println(sort(lst3,0,lst3.size()-1));
 
-    
     }
     
     public void testSwap(){
