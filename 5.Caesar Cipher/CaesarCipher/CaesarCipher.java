@@ -1,6 +1,6 @@
 
 /**
- * 在这里给出对类 CaesarCiper 的描述。
+ * 在这里给出对类 CaesarCipher 的描述。
  * 
  * @作者（你的名字）
  * @版本（一个版本号或者一个日期）
@@ -8,7 +8,7 @@
 import edu.duke.*;
 import java.util.*;
 
-public class CaesarCiper {
+public class CaesarCipher {
     public String encrypt(String text,int key){
         StringBuilder encrypted = new StringBuilder(text);
         String alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
