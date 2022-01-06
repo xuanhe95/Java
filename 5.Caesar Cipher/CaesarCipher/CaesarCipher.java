@@ -14,11 +14,9 @@ public class CaesarCipher {
         String alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String shiftedAlphabet=alphabet.substring(key)+alphabet.substring(0,key);
         for(int i=0;i<encrypted.length();i++){
-            
             char curChar=encrypted.charAt(i);
             boolean lower=Character.isLowerCase(curChar); 
             int idx=alphabet.indexOf(Character.toUpperCase(curChar));
-
             if(idx!=-1){
                 if(lower){
                     encrypted.setCharAt(i,Character.toLowerCase(shiftedAlphabet.charAt(idx)));
@@ -55,6 +53,19 @@ public class CaesarCipher {
         String message = fr.asString();
         String encrypted = encrypt(message, key);
         System.out.println("key is " + key + "\n" + encrypted);
+    }
+    
+    public void testEncryptTwoKeys(){
+        Scanner scanner1=new Scanner(System.in);
+        System.out.println("Input your first key: ");
+        Scanner scanner2=new Scanner(System.in);
+        System.out.println("Input your second key: ");
+        int key1=Integer.parseInt(scanner1.nextLine());
+        int key2=Integer.parseInt(scanner2.nextLine());
+        FileResource fr = new FileResource();
+        String message = fr.asString();
+        String encrypted = encryptTwoKeys(message, key1,key2);
+        System.out.println("key is " + key1+" and "+key2 + "\n" + encrypted);
     }
     
 }
