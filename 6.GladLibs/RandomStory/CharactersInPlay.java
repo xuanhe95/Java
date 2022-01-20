@@ -42,7 +42,7 @@ public class CharactersInPlay {
     }
     public void tester(){
         findAllCharacters();
-        charactersWithNumParts(10,15);
+        charactersWithNumParts(10,100);
     }
     public void charactersWithNumParts(int num1,int num2){
         int total=0;
