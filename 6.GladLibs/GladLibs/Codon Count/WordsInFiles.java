@@ -84,7 +84,7 @@ public class WordsInFiles {
     
     public void quiz2(){
         buildWordFileMap();
-        printFilesln("laid");
+        printFilesln("sea");
     
     }
     
