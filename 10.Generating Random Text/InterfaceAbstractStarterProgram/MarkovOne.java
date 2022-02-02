@@ -8,9 +8,7 @@
 
 import java.util.*;
 
-public class MarkovOne {
-    private String myText;
-    private Random myRandom;
+public class MarkovOne extends AbstractMarkovModel{
 	
     public MarkovOne() {
 	myRandom = new Random();
@@ -54,4 +52,10 @@ public class MarkovOne {
         }
         return sb.toString();
     }
+    
+    public String toString(){
+        String s = "MarkovModel of order 1";
+        return s;
+    }    
+
 }

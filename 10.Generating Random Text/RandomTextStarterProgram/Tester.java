@@ -26,7 +26,7 @@ public class Tester {
         
         MarkovOne markov = new MarkovOne();
         markov.setTraining(st);
-        ArrayList<String> follows = markov.getFollows("t");
+        ArrayList<String> follows = markov.getFollows("th");
         
         System.out.println("Size is: "+follows.size());
     }

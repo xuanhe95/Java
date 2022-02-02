@@ -1,6 +1,6 @@
 
 /**
- * 在这里给出对类 MarkovOne 的描述。
+ * 在这里给出对类 MarkovFour 的描述。
  * 
  * @作者（你的名字）
  * @版本（一个版本号或者一个日期）
@@ -8,11 +8,11 @@
 
 import java.util.*;
 
-public class MarkovOne {
+public class MarkovFour {
     private String myText;
     private Random myRandom;
 	
-    public MarkovOne() {
+    public MarkovFour() {
 	myRandom = new Random();
     }
 	
@@ -26,7 +26,7 @@ public class MarkovOne {
 	
     public ArrayList<String> getFollows(String key){
         ArrayList<String> follows=new ArrayList<String>();
-        for(int i=0;i<myText.length()-1;i++){
+        for(int i=0;i<myText.length()-4;i++){//边界处理？
             String curString = myText.substring(i,i+key.length());
             if(curString.equals(key)){
                 String nextString = myText.substring(i+key.length(),i+1+key.length());
@@ -38,8 +38,8 @@ public class MarkovOne {
 
     public String getRandomText(int numChars){
         StringBuilder sb = new StringBuilder();
-        int index = myRandom.nextInt(myText.length()-1);
-        String key = myText.substring(index,index+1);
+        int index = myRandom.nextInt(myText.length()-4);
+        String key = myText.substring(index,index+4);
         sb.append(key);
         
         for(int k=0; k < numChars; k++){
@@ -50,7 +50,7 @@ public class MarkovOne {
             index = myRandom.nextInt(follows.size());
             String next = follows.get(index);
             sb.append(next);
-            key=next;
+            key=key.substring(1)+next;
         }
         return sb.toString();
     }
