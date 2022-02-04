@@ -1,2 +1,0 @@
-Week3 Assignment
-WordGram Class
