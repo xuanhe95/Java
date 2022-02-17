@@ -12,7 +12,7 @@ import org.apache.commons.csv.*;
 public class FirstRatings {
     public ArrayList<Movie> loadMovies(String filename){
         ArrayList<Movie> movies = new ArrayList<Movie>();
-        FileResource fr = new FileResource("data/"+filename);
+        FileResource fr = new FileResource(filename);
         String text = fr.asString();
         CSVParser parser = fr.getCSVParser();
 
@@ -46,7 +46,7 @@ public class FirstRatings {
             double rateRating = Double.parseDouble(record.get("rating"));
             String rateTime = record.get("time");
             if(!map.containsKey(raterID)){  //map中没有当前raterID则创建新Rater。
-                Rater rater = new Rater(raterID);
+                Rater rater = new EfficientRater(raterID);
                 rater.addRating(movieID,rateRating);
                 raters.add(rater);
                 
