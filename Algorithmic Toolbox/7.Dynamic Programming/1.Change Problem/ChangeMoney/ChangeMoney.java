@@ -25,7 +25,7 @@ public class ChangeMoney {
     
     public void test(){
         int[] coins = new int[]{1,8,10};
-        int money = 64;
+        int money = 53;
         System.out.println(changeMoney(money,coins));
     }
 }
