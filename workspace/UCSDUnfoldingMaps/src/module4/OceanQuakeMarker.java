@@ -30,6 +30,17 @@ public class OceanQuakeMarker extends EarthquakeMarker {
 		// and how it is set in the EarthquakeMarker constructor
 		
 		// TODO: Implement this method
+		float threshold = 3;
+		float radius = 5;
+		float scale = (float) getProperty("magnitude") / 8;
+		radius = threshold + scale * radius;
+		pg.rectMode(2);
+		pg.rect(x, y, radius, radius);
+		
+		if(getProperty("age").equals("Past Week")) {
+			pg.line(x-radius,y-radius,x+radius,y+radius);
+			pg.line(x-radius,y+radius,x+radius,y-radius);
+		}
 		
 	}
 	

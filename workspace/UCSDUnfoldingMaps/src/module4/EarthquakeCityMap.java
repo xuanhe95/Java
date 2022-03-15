@@ -1,6 +1,7 @@
 package module4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -11,11 +12,16 @@ import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
+import de.fhpotsdam.unfolding.marker.SimplePointMarker;
+import de.fhpotsdam.unfolding.providers.AbstractMapProvider;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
+import de.fhpotsdam.unfolding.providers.Microsoft;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import parsing.ParseFeed;
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
@@ -52,6 +58,9 @@ public class EarthquakeCityMap extends PApplet {
 	// The map
 	private UnfoldingMap map;
 	
+	// Alternative map provider
+	AbstractMapProvider provider = new Microsoft.HybridProvider();
+	
 	// Markers for each city
 	private List<Marker> cityMarkers;
 	// Markers for each earthquake
@@ -59,6 +68,8 @@ public class EarthquakeCityMap extends PApplet {
 
 	// A List of country markers
 	private List<Marker> countryMarkers;
+	
+	
 	
 	public void setup() {		
 		// (1) Initializing canvas and map tiles
@@ -68,7 +79,7 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 200, 50, 650, 600, provider);
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 		    //earthquakesURL = "2.5_week.atom";
 		}
@@ -111,7 +122,7 @@ public class EarthquakeCityMap extends PApplet {
 	    }
 
 	    // could be used for debugging
-	    printQuakes();
+	    //printQuakes();
 	 		
 	    // (3) Add markers to map
 	    //     NOTE: Country markers are not added to the map.  They are used
@@ -152,9 +163,33 @@ public class EarthquakeCityMap extends PApplet {
 		text("5.0+ Magnitude", 75, 125);
 		text("4.0+ Magnitude", 75, 175);
 		text("Below 4.0", 75, 225);
+		
+		PGraphics pg = createGraphics(650,600);
+		pg.beginDraw();
+		for(Marker city : cityMarkers) {
+			CityMarker cm = (CityMarker) city;
+			ScreenPosition point = ((SimplePointMarker) city).getScreenPosition(map);
+			point = matchScreen(point);
+			cm.draw(pg,point.x,point.y);
+
+		}
+
+		for(Marker eq : quakeMarkers) {
+			EarthquakeMarker em = (EarthquakeMarker) eq;
+			ScreenPosition point = ((SimplePointMarker) eq).getScreenPosition(map);
+			point = matchScreen(point);
+			em.draw(pg,point.x,point.y);
+		}
+		
+		pg.endDraw();
+		image(pg,200,50);
 	}
 
-	
+	private ScreenPosition matchScreen(ScreenPosition point) {
+		point.x -= 200;
+		point.y -= 50;
+		return point;
+	}
 	
 	// Checks whether this quake occurred on land.  If it did, it sets the 
 	// "country" property of its PointFeature to the country where it occurred
@@ -170,10 +205,12 @@ public class EarthquakeCityMap extends PApplet {
 		// If isInCountry ever returns true, isLand should return true.
 		for (Marker m : countryMarkers) {
 			// TODO: Finish this method using the helper method isInCountry
-			
+			if(isInCountry(earthquake, m)) {
+				return true;
+			}
 		}
 		
-		
+
 		// not inside any country
 		return false;
 	}
@@ -210,7 +247,36 @@ public class EarthquakeCityMap extends PApplet {
 		//  * If you know your Marker, m, is a LandQuakeMarker, then it has a "country" 
 		//      property set.  You can get the country with:
 		//        String country = (String)m.getProperty("country");
+		HashMap<String, Integer> myMap = new HashMap<String, Integer>();
 		
+		
+		
+		for(Marker m : quakeMarkers) {
+			//Properties: magnitude, title, radius, age, country, depth
+
+			String country;
+			
+			if(m.getProperty("country") == null) {
+				country = "Ocean";
+			}
+			else {
+				country = (String) m.getProperty("country");
+			}
+
+			if(!myMap.containsKey(country)){
+				myMap.put(country, 1);
+				
+			}
+			else {
+				int count = myMap.get(country);
+				count++;
+				myMap.put(country, count);
+			}
+		}
+		
+		for(String country : myMap.keySet()) {
+			System.out.println(country + "	" + myMap.get(country));
+		}
 		
 	}
 	

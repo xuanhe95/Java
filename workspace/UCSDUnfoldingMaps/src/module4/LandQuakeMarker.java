@@ -34,6 +34,19 @@ public class LandQuakeMarker extends EarthquakeMarker {
 		
 		// TODO: Implement this method
 		
+		float threshold = 3;
+		float radius = 10;
+		float scale = (float) getProperty("magnitude") / 4;
+		radius = threshold + scale * radius;
+		pg.ellipse(x, y, radius, radius);
+		
+		if(getProperty("age").equals("Past Week")) {
+			radius /= 2.828;
+			pg.line(x-radius,y-radius,x+radius,y+radius);
+			pg.line(x-radius,y+radius,x+radius,y-radius);
+		}
+		
+		
 	}
 	
 
