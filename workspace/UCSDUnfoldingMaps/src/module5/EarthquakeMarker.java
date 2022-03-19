@@ -1,6 +1,13 @@
 package module5;
 
+import java.util.List;
+
+import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.data.PointFeature;
+import de.fhpotsdam.unfolding.marker.AbstractMarker;
+import de.fhpotsdam.unfolding.marker.Marker;
+import de.fhpotsdam.unfolding.marker.SimplePointMarker;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
 import processing.core.PGraphics;
 
 /** Implements a visual marker for earthquakes on an earthquake map
@@ -94,6 +101,14 @@ public abstract class EarthquakeMarker extends CommonMarker
 	public void showTitle(PGraphics pg, float x, float y)
 	{
 		// TODO: Implement this method
+		String title = getStringProperty("title");
+
+		float textWidth = pg.textWidth(title);
+		pg.fill(250,250,150);
+		pg.rect(x,y,textWidth+20,20);
+		pg.fill(0);
+		pg.textSize(10);
+		pg.text(title,x+15,y+15);
 		
 	}
 
@@ -110,6 +125,8 @@ public abstract class EarthquakeMarker extends CommonMarker
 		double km = (miles * kmPerMile);
 		return km;
 	}
+	
+	
 	
 	// determine color of marker from depth
 	// We use: Deep = red, intermediate = blue, shallow = yellow
