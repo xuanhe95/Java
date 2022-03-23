@@ -115,6 +115,14 @@ public class MyLinkedListTester {
 		assertEquals("Remove: check size is correct ", 2, list1.size());
 		
 		// TODO: Add more tests here
+		try {
+			list1.remove(-1);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+		
 	}
 	
 	/** Test adding an element into the end of the list, specifically
@@ -124,6 +132,10 @@ public class MyLinkedListTester {
 	public void testAddEnd()
 	{
         // TODO: implement this test
+		emptyList.add(4);
+		assertEquals("AddEnd: check the end element", (Integer)4, emptyList.get(0));
+		list1.add(4);
+		assertEquals("AddEnd: check the end element", (Integer)4, list1.get(3));
 		
 	}
 
@@ -133,6 +145,8 @@ public class MyLinkedListTester {
 	public void testSize()
 	{
 		// TODO: implement this test
+		assertEquals("Size: check size is correct", 3, list1.size());
+		assertEquals("Size: check size is empty", 0, emptyList.size());
 	}
 
 	
@@ -144,7 +158,27 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddAtIndex()
 	{
-        // TODO: implement this test
+		 // TODO: implement this test
+		try {
+			emptyList.add(-1, 3);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+		
+		try {
+			emptyList.add(1, 3);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+       
+		emptyList.add(0, 3);
+		assertEquals("AddAtIndex: check add at 0", (Integer)3, emptyList.get(0));
+		list1.add(1, 4);
+		assertEquals("AddAtIndex: check add at 1", (Integer)4, list1.get(1));
 		
 	}
 	
@@ -153,6 +187,36 @@ public class MyLinkedListTester {
 	public void testSet()
 	{
 	    // TODO: implement this test
+		try {
+			emptyList.set(-1, 3);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+		
+		try {
+			emptyList.set(0, 3);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+		
+		try {
+			list1.set(10, 3);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+		
+		list1.set(1, 4);
+		assertEquals("AddAtIndex: check add at 1", (Integer)4, list1.get(1));
+		list1.set(0, 10);
+		assertEquals("AddAtIndex: check add at 0", (Integer)10, list1.get(0));
+		
+		
 	    
 	}
 	

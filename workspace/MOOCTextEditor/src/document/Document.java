@@ -190,14 +190,12 @@ public abstract class Document {
 	{
 	    // TODO: You will play with this method in week 1, and 
 		// then implement it in week 2
-		Document doc = new BasicDocument(text);
-
-		double totalWords = doc.getNumWords();
-		double totalSentences = doc.getNumSentences();
-		double totalSyllables = doc.getNumSyllables();
+		double totalWords = getNumWords();
+		double totalSentences = getNumSentences();
+		double totalSyllables = getNumSyllables();
 
 		double score = 206.835 - 1.015 * (totalWords / totalSentences) - 84.6 * (totalSyllables / totalWords);
-		
+
 	    return score;
 	}
 	
