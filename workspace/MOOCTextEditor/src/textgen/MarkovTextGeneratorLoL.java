@@ -1,5 +1,6 @@
 package textgen;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -20,12 +21,17 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	// The random number generator
 	private Random rnGenerator;
 	
+	// The map for ListNode
+	private HashMap<String, ListNode> myMap;
+	
 	public MarkovTextGeneratorLoL(Random generator)
 	{
 		wordList = new LinkedList<ListNode>();
 		starter = "";
 		rnGenerator = generator;
+		myMap = new HashMap<String, ListNode>();
 	}
+
 	
 	
 	/** Train the generator by adding the sourceText */
@@ -33,6 +39,36 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	public void train(String sourceText)
 	{
 		// TODO: Implement this method
+		
+		String[] words = sourceText.split("[ ]+");
+		starter = words[0];
+
+		
+		for( int i = 0; i < words.length ; i++ ) {
+			String curWord = words[i];
+			String nextWord;
+			if ( i == words.length - 1 ) {
+				nextWord = starter;
+			}
+			else {
+				nextWord = words[ i + 1 ];
+			}
+			
+			if ( !myMap.containsKey( curWord ) ) {
+				ListNode node = new ListNode( curWord );
+				node.addNextWord( nextWord );
+				
+				myMap.put( curWord, node );
+			}
+			else {
+				ListNode node = myMap.get( curWord );
+				node.addNextWord( nextWord );
+			}
+		}
+		
+		for( String word : myMap.keySet()) {
+			wordList.add( myMap.get(word) );
+		}
 	}
 	
 	/** 
@@ -41,7 +77,19 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	@Override
 	public String generateText(int numWords) {
 	    // TODO: Implement this method
-		return null;
+		
+		String curWord = starter;
+		
+		String output = "";
+		for ( int i = 0; i < numWords; i++ ) {
+			ListNode curNode = myMap.get( curWord );
+			String nextWord = curNode.getRandomNextWord(rnGenerator);
+			output += nextWord + " ";
+			curWord = nextWord;
+		}
+		
+		
+		return output;
 	}
 	
 	
@@ -62,6 +110,11 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	public void retrain(String sourceText)
 	{
 		// TODO: Implement this method.
+		wordList = new LinkedList<ListNode>();
+		starter = "";
+		myMap = new HashMap<String, ListNode>();
+		train( sourceText );
+		
 	}
 	
 	// TODO: Add any private helper methods you need here.
@@ -144,7 +197,7 @@ class ListNode
 		// TODO: Implement this method
 	    // The random number generator should be passed from 
 	    // the MarkovTextGeneratorLoL class
-	    return null;
+	    return nextWords.get( generator.nextInt(nextWords.size()) );
 	}
 
 	public String toString()
