@@ -23,6 +23,7 @@ public class WPTreeGrader {
     }
 
     public static void main (String[] args) {
+    	
         int incorrect = 0;
         int tests = 0;
         String feedback = "";
@@ -45,21 +46,25 @@ public class WPTreeGrader {
 
             feedback += "** Test #1: Testing short path...";
             feedback += "Your path was: " + printPath(path) + ".\n";
+            
 
             path = tree.findPath("stools", "moon");
 
             feedback += "** Test #2: Testing long path...";
             feedback += "Your path was: " + printPath(path) + ".\n";
 
+
             path = tree.findPath("foal", "needless");
 
             feedback += "** Test #3: Testing impossible path...";
             feedback += "Your path was: " + printPath(path) + ".\n";
 
+
             path = tree.findPath("needle", "kitten");
             
             feedback += "** Test #4: Testing using a nonexistent word...";
             feedback += "Your path was: " + printPath(path) + ".\n";
+
         } catch (Exception e) {
             out.println(e);
             out.close();

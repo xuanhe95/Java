@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Test;
+
 /**
  * WPTree implements WordPath by dynamically creating a tree of words during a Breadth First
  * Search of Nearby words to create a path between two words. 
@@ -27,9 +29,9 @@ public class WPTree implements WordPath {
 	public WPTree () {
 		this.root = null;
 		// TODO initialize a NearbyWords object
-		// Dictionary d = new DictionaryHashSet();
-		// DictionaryLoader.loadDictionary(d, "data/dict.txt");
-		// this.nw = new NearbyWords(d);
+		Dictionary d = new DictionaryHashSet();
+		DictionaryLoader.loadDictionary(d, "data/dict.txt");
+		this.nw = new NearbyWords(d);
 	}
 	
 	//This constructor will be used by the grader code
@@ -42,7 +44,36 @@ public class WPTree implements WordPath {
 	public List<String> findPath(String word1, String word2) 
 	{
 	    // TODO: Implement this method.
-	    return new LinkedList<String>();
+
+		LinkedList<WPTreeNode> queue = new LinkedList<WPTreeNode>();
+		HashSet<String> checked = new HashSet<String>();
+		
+		
+		
+		WPTreeNode curNode = new WPTreeNode(word1,root);
+		checked.add(word1);
+		queue.offer(curNode);
+		
+		while ( !queue.isEmpty() ) {
+			curNode = queue.poll();
+
+
+			List<String> nextWords = nw.distanceOne(curNode.getWord(), true);
+			for ( String nextWord : nextWords ) {
+				if ( !checked.contains(nextWord) ) {
+
+					checked.add(nextWord);
+					WPTreeNode nextNode = curNode.addChild(nextWord);
+					queue.offer(nextNode);
+
+					if ( nextWord.equals(word2) ) {
+						return nextNode.buildPathToRoot();
+					}
+				}
+			}
+		}
+
+	    return null;
 	}
 	
 	// Method to print a list of WPTreeNodes (useful for debugging)
@@ -54,6 +85,18 @@ public class WPTree implements WordPath {
 		}
 		ret+= "]";
 		return ret;
+	}
+	
+	
+	public static void main (String[] args) {
+		WPTree tree = new WPTree();
+		List<String> list = tree.findPath("stools", "moon");
+		if ( list != null) {
+			for (String word : list) {
+				System.out.println(word);
+			}
+		}
+		
 	}
 	
 }
