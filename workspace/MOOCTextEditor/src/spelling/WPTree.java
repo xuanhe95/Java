@@ -88,17 +88,6 @@ public class WPTree implements WordPath {
 	}
 	
 	
-	public static void main (String[] args) {
-		WPTree tree = new WPTree();
-		List<String> list = tree.findPath("stools", "moon");
-		if ( list != null) {
-			for (String word : list) {
-				System.out.println(word);
-			}
-		}
-		
-	}
-	
 }
 
 /* Tree Node in a WordPath Tree. This is a standard tree with each

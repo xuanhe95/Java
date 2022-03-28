@@ -123,7 +123,7 @@ public class EarthquakeCityMap extends PApplet {
 	    }
 
 	    // could be used for debugging
-	    printQuakes();
+	    //printQuakes();
 	 		
 	    // (3) Add markers to map
 	    //     NOTE: Country markers are not added to the map.  They are used
@@ -131,7 +131,8 @@ public class EarthquakeCityMap extends PApplet {
 	    map.addMarkers(quakeMarkers);
 	    map.addMarkers(cityMarkers);
 	    
-	    sortAndPrint(quakeMarkers.size());
+	    //sortAndPrint(quakeMarkers.size());
+	    sortAndPrint(20);
 	    
 	    
 	}  // End setup
@@ -161,8 +162,7 @@ public class EarthquakeCityMap extends PApplet {
 		for(int i=0; i<numToPrint; i++) {
 			System.out.println(array.get(i));
 		}
-		
-		
+
 	}
 	
 	/** Event handler that gets called automatically when the 

@@ -93,7 +93,6 @@ public class EarthquakeCityMap extends PApplet {
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
 		//earthquakesURL = "quiz1.atom";
 		
-		
 		// (2) Reading in earthquake data and geometric properties
 	    //     STEP 1: load country features and markers
 		List<Feature> countries = GeoJSONReader.loadData(this, countryFile);
@@ -130,6 +129,7 @@ public class EarthquakeCityMap extends PApplet {
 	    map.addMarkers(quakeMarkers);
 	    map.addMarkers(cityMarkers);
 	    
+	    
 	}  // End setup
 	
 	
@@ -137,7 +137,6 @@ public class EarthquakeCityMap extends PApplet {
 		background(0);
 		map.draw();
 		addKey();
-		
 	}
 	
 	// helper method to draw key in GUI
@@ -248,8 +247,6 @@ public class EarthquakeCityMap extends PApplet {
 		//      property set.  You can get the country with:
 		//        String country = (String)m.getProperty("country");
 		HashMap<String, Integer> myMap = new HashMap<String, Integer>();
-		
-		
 		
 		for(Marker m : quakeMarkers) {
 			//Properties: magnitude, title, radius, age, country, depth
