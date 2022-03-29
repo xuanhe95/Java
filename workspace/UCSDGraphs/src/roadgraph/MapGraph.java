@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -30,9 +31,8 @@ import util.GraphLoader;
  */
 public class MapGraph {
 	//TODO: Add your member variables here in WEEK 3
-	Set<GeographicPoint> vertices;
-	List<Integer> edges;
-	HashMap<GeographicPoint, List<Edge>> graphMap;
+	Set<Vertex> vertices;
+	HashMap<GeographicPoint, Vertex> locMap;
 	
 	/** 
 	 * Create a new empty MapGraph 
@@ -40,8 +40,8 @@ public class MapGraph {
 	public MapGraph()
 	{
 		// TODO: Implement in this constructor in WEEK 3
-		vertices = new HashSet<GeographicPoint>();
-		graphMap = new HashMap<GeographicPoint,List<Edge>>();
+		vertices = new HashSet<Vertex>();
+		locMap = new HashMap<GeographicPoint, Vertex>();
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class MapGraph {
 	public Set<GeographicPoint> getVertices()
 	{
 		//TODO: Implement this method in WEEK 3
-		return vertices;
+		return locMap.keySet();
 	}
 	
 	/**
@@ -72,13 +72,8 @@ public class MapGraph {
 	{
 		//TODO: Implement this method in WEEK 3
 		int total = 0;
-		
-		for ( GeographicPoint vertice : vertices) {
-			if ( graphMap.get(vertice) == null) {
-				continue;
-				
-			}
-			total += graphMap.get(vertice).size();
+		for ( Vertex vertex : vertices) {
+			total += vertex.getEdges().size();
 		} 
 		return total;
 	}
@@ -95,8 +90,12 @@ public class MapGraph {
 	public boolean addVertex(GeographicPoint location)
 	{
 		// TODO: Implement this method in WEEK 3
-		return vertices.add(location);
+		Vertex vertex = new Vertex(location);
+		locMap.put(location, vertex);
+		return vertices.add(vertex);
 	}
+	
+
 	
 	/**
 	 * Adds a directed edge to the graph from pt1 to pt2.  
@@ -114,21 +113,17 @@ public class MapGraph {
 			String roadType, double length) throws IllegalArgumentException {
 		//TODO: Implement this method in WEEK 3
 		// throw error if argument equals null
-		if ( (!vertices.contains(from) && !vertices.contains(to)) || 
+		if ( (!locMap.containsKey(from) && !locMap.containsKey(to) ) ||
 				roadName == null || roadType == null || length < 0 ) {
-			throw new IllegalArgumentException("Fail");
+			throw new IllegalArgumentException("Road type is wrong!");
 		}
-		Edge road = new Edge(from, to, roadName, roadType, length);
 		
-		if ( graphMap.containsKey(from)) {
-			graphMap.get(from).add(road);
+		for (Vertex vertex : vertices) {
+			if ( vertex.getLocation().equals(from) ) {
+				Edge road = new Edge(from, to, roadName, roadType, length);
+				vertex.addEdge(road);
+			}
 		}
-		else {
-			graphMap.put(from, new ArrayList<Edge>());
-			graphMap.get(from).add(road);
-		}
-
-		
 	}
 	
 
@@ -157,36 +152,31 @@ public class MapGraph {
 			 					     GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
 	{
 		// TODO: Implement this method in WEEK 3
+		// Hook for visualization.  See writeup.
+		//nodeSearched.accept(next.getLocation());
+
 		HashSet<GeographicPoint> checked = new HashSet<GeographicPoint>();
 		HashMap<GeographicPoint, GeographicPoint> parents = new HashMap<GeographicPoint, GeographicPoint>();
-		
 		Queue<GeographicPoint> queue = new LinkedList<GeographicPoint>();
+		
 		queue.offer(start);
 		while ( !queue.isEmpty()) {
 			GeographicPoint curPoint = queue.poll();
-			//get edges from the vertice
-			List<Edge> roads = graphMap.get(curPoint);
-			for (Edge road : roads) {
-				//offer new geographic point to queue
+			for (Edge road : locMap.get(curPoint).getEdges()) {	//get edges from the vertex
 				GeographicPoint nextPoint = road.getOtherPoint(curPoint);
-
 				if ( nextPoint.equals(goal) ) {
-					return buildPath(start, goal, parents); //if find the goal, build path
+					parents.put( nextPoint, curPoint );	//DON'T FOGET THIS LAST POINT!!!
+					return buildPath( start, goal, parents ); //if find the goal, build path
 				}
 				if ( checked.contains(nextPoint) ) {	//continue if checked
 					continue;
 				}
-				nodeSearched.accept(nextPoint);
+				nodeSearched.accept( nextPoint );
 				checked.add( nextPoint );	//add to checked points
-				parents.put(nextPoint, curPoint);	//record next point's parent
+				parents.put( nextPoint, curPoint );	//record next point's parent
 				queue.offer( nextPoint );
 			}
 		}
-		
-		
-		// Hook for visualization.  See writeup.
-		//nodeSearched.accept(next.getLocation());
-
 		return null;
 	}
 	
@@ -197,12 +187,20 @@ public class MapGraph {
 		while ( !curPoint.equals(start) ) {
 			path.add(0, curPoint);
 			curPoint = parents.get(curPoint);
-			
 		}
 		path.add(0, start);
+		resetDistanceAndPriority();
 
 		return path;
 	}
+	
+	private void resetDistanceAndPriority() {
+		for (Vertex vertex : vertices) {
+			vertex.setPriority(1/0.0);
+			vertex.setDistance(0.0);
+		}
+	}
+	
 	
 
 	/** Find the path from start to goal using Dijkstra's algorithm
@@ -231,13 +229,11 @@ public class MapGraph {
 										  GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
 	{
 		// TODO: Implement this method in WEEK 4
-
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
-		
-		return null;
+		return prioritySearch(start, goal, nodeSearched, false);
 	}
-
+	
 	/** Find the path from start to goal using A-Star search
 	 * 
 	 * @param start The starting location
@@ -260,14 +256,58 @@ public class MapGraph {
 	 *   start to goal (including both start and goal).
 	 */
 	public List<GeographicPoint> aStarSearch(GeographicPoint start, 
-											 GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
-	{
+											 GeographicPoint goal, Consumer<GeographicPoint> nodeSearched) {
 		// TODO: Implement this method in WEEK 4
-		
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
+		return prioritySearch(start, goal, nodeSearched, true);
+	}
+	
+	//main method to conduct Dijkstra and A* search
+	private List<GeographicPoint> prioritySearch(GeographicPoint start, GeographicPoint goal,
+												Consumer<GeographicPoint> nodeSearched , boolean astar){
 		
+		HashSet<GeographicPoint> checked = new HashSet<GeographicPoint>();
+		HashMap<GeographicPoint, GeographicPoint> parents = new HashMap<GeographicPoint, GeographicPoint>();
+		PriorityQueue<Vertex> queue = new PriorityQueue<Vertex>();
+		Vertex curVertex = locMap.get(start);
+		queue.offer(curVertex);
+		while ( !queue.isEmpty()) {
+			curVertex = queue.poll();
+			GeographicPoint curPoint = curVertex.getLocation();
+			if ( !checked.contains(curPoint) ) {
+				if ( curPoint.equals(goal) ) {
+					return buildPath(start, goal, parents); //if find the goal, build path
+				}
+				checked.add( curPoint );	//add to checked points
+				for (Edge road : curVertex.getEdges()) {	//get edges from the vertex
+					GeographicPoint nextPoint = road.getOtherPoint(curPoint);
+					if( !checked.contains( nextPoint )) {
+						Vertex nextVertex = locMap.get(nextPoint);
+						double distance = getPriority(curVertex, nextPoint, goal, false);
+						double priority = getPriority(curVertex, nextPoint, goal, astar);
+						if ( priority < nextVertex.getPriority() ) {
+							nodeSearched.accept(nextPoint);
+							nextVertex.setPriority( priority );
+							nextVertex.setDistance( distance );
+							parents.put( nextPoint, curPoint );	//record next point's parent
+							queue.offer( nextVertex );	//offer next vertex
+						}
+					}
+				}
+			}
+		}
 		return null;
+	}
+	
+	private double getPriority(Vertex from, GeographicPoint to, GeographicPoint goal, boolean heuristic) {
+		double weight = from.getDistance() + from.getDistanceTo(to);
+
+		if ( heuristic ) {
+			double heuristicWeight = to.distance(goal);
+			return weight + heuristicWeight;
+		}
+		return weight;
 	}
 
 	
@@ -287,7 +327,7 @@ public class MapGraph {
 		 * the Week 3 End of Week Quiz, EVEN IF you score 100% on the 
 		 * programming assignment.
 		 */
-		/*
+		
 		MapGraph simpleTestMap = new MapGraph();
 		GraphLoader.loadRoadMap("data/testdata/simpletest.map", simpleTestMap);
 		
@@ -316,7 +356,7 @@ public class MapGraph {
 		System.out.println("Test 3 using utc: Dijkstra should be 37 and AStar should be 10");
 		testroute = testMap.dijkstra(testStart,testEnd);
 		testroute2 = testMap.aStarSearch(testStart,testEnd);
-		*/
+		
 		
 		
 		/* Use this code in Week 3 End of Week Quiz */
