@@ -78,8 +78,6 @@ public class MapGraph {
 		return total;
 	}
 
-	
-	
 	/** Add a node corresponding to an intersection at a Geographic Point
 	 * If the location is already in the graph or null, this method does 
 	 * not change the graph.
@@ -189,7 +187,7 @@ public class MapGraph {
 			curPoint = parents.get(curPoint);
 		}
 		path.add(0, start);
-		resetDistanceAndPriority();
+		resetDistanceAndPriority();	//every time call priority search will reset all distance and priority values in vertices
 
 		return path;
 	}
@@ -200,8 +198,6 @@ public class MapGraph {
 			vertex.setDistance(0.0);
 		}
 	}
-	
-	
 
 	/** Find the path from start to goal using Dijkstra's algorithm
 	 * 
@@ -231,7 +227,7 @@ public class MapGraph {
 		// TODO: Implement this method in WEEK 4
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
-		return prioritySearch(start, goal, nodeSearched, false);
+		return prioritySearch(start, goal, nodeSearched, "DIJKSTRA");
 	}
 	
 	/** Find the path from start to goal using A-Star search
@@ -260,12 +256,12 @@ public class MapGraph {
 		// TODO: Implement this method in WEEK 4
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
-		return prioritySearch(start, goal, nodeSearched, true);
+		return prioritySearch(start, goal, nodeSearched, "ASTAR" );
 	}
 	
 	//main method to conduct Dijkstra and A* search
 	private List<GeographicPoint> prioritySearch(GeographicPoint start, GeographicPoint goal,
-												Consumer<GeographicPoint> nodeSearched , boolean astar){
+												Consumer<GeographicPoint> nodeSearched, String searchType){
 		
 		HashSet<GeographicPoint> checked = new HashSet<GeographicPoint>();
 		HashMap<GeographicPoint, GeographicPoint> parents = new HashMap<GeographicPoint, GeographicPoint>();
@@ -275,6 +271,9 @@ public class MapGraph {
 		while ( !queue.isEmpty()) {
 			curVertex = queue.poll();
 			GeographicPoint curPoint = curVertex.getLocation();
+			System.out.println( searchType + "	" + curVertex.getLocation() );
+			nodeSearched.accept(curPoint);	//show points on the map
+
 			if ( !checked.contains(curPoint) ) {
 				if ( curPoint.equals(goal) ) {
 					return buildPath(start, goal, parents); //if find the goal, build path
@@ -284,8 +283,23 @@ public class MapGraph {
 					GeographicPoint nextPoint = road.getOtherPoint(curPoint);
 					if( !checked.contains( nextPoint )) {
 						Vertex nextVertex = locMap.get(nextPoint);
-						double distance = getPriority(curVertex, nextPoint, goal, false);
-						double priority = getPriority(curVertex, nextPoint, goal, astar);
+						double distance = getPriority(curVertex, nextPoint);
+						double priority;
+						
+						switch( searchType ) {
+							case "DIJKSTRA":
+								priority = getPriority(curVertex, nextPoint);
+								break;
+							case "ASTAR":
+								priority = getPriority(curVertex, nextPoint, goal);
+								break;
+							case "ROADTYPE":
+								priority = getPriority(curVertex, nextPoint, road);
+								break;
+							default:
+								priority = getPriority(curVertex, nextPoint);
+						}
+
 						if ( priority < nextVertex.getPriority() ) {
 							nodeSearched.accept(nextPoint);
 							nextVertex.setPriority( priority );
@@ -300,17 +314,46 @@ public class MapGraph {
 		return null;
 	}
 	
-	private double getPriority(Vertex from, GeographicPoint to, GeographicPoint goal, boolean heuristic) {
-		double weight = from.getDistance() + from.getDistanceTo(to);
-
-		if ( heuristic ) {
-			double heuristicWeight = to.distance(goal);
-			return weight + heuristicWeight;
-		}
-		return weight;
+	private double getPriority (Vertex from, GeographicPoint to) {	//for Dijkstra method
+		return from.getDistance() + from.getDistanceTo(to);
+	}
+	
+	private double getPriority (Vertex from, GeographicPoint to, GeographicPoint goal) {
+		double weight = from.getDistance() + from.getDistanceTo(to);	//calculate new distance
+		double heuristicWeight = to.distance(goal);	//calculate heuristic distance
+		return weight + heuristicWeight;
 	}
 
+	private double getPriority (Vertex from, GeographicPoint to, Edge road) {
+		double weight = from.getDistanceTo(to);
+		switch ( road.getType() ) {	//different weight based on road types
+			case "primary":
+				weight *= 0.7;
+			case "secondary":
+				weight *= 0.8;
+			case "tertiary":
+				weight *= 0.9;
+			case "city street":
+				weight *= 1.0;
+			case "residential":
+				weight *= 1.2;
+			default:
+				weight *= 2.0;
+		}
+		return from.getDistance() + weight;
+	}
 	
+	
+	public List<GeographicPoint> roadTypeSearch(GeographicPoint start, GeographicPoint goal) {
+		// Dummy variable for calling the search algorithms
+        Consumer<GeographicPoint> temp = (x) -> {};
+        return roadTypeSearch(start, goal, temp);
+	}
+	
+	public List<GeographicPoint> roadTypeSearch(GeographicPoint start, 
+			 GeographicPoint goal, Consumer<GeographicPoint> nodeSearched) {
+		return prioritySearch( start, goal, nodeSearched, "ROADTYPE" );
+	}
 	
 	public static void main(String[] args)
 	{
@@ -337,7 +380,7 @@ public class MapGraph {
 		System.out.println("Test 1 using simpletest: Dijkstra should be 9 and AStar should be 5");
 		List<GeographicPoint> testroute = simpleTestMap.dijkstra(testStart,testEnd);
 		List<GeographicPoint> testroute2 = simpleTestMap.aStarSearch(testStart,testEnd);
-		
+		List<GeographicPoint> testroute3 = simpleTestMap.roadTypeSearch(testStart, testEnd);
 		
 		MapGraph testMap = new MapGraph();
 		GraphLoader.loadRoadMap("data/maps/utc.map", testMap);
@@ -348,6 +391,7 @@ public class MapGraph {
 		System.out.println("Test 2 using utc: Dijkstra should be 13 and AStar should be 5");
 		testroute = testMap.dijkstra(testStart,testEnd);
 		testroute2 = testMap.aStarSearch(testStart,testEnd);
+		testroute3 = testMap.roadTypeSearch(testStart, testEnd);
 		
 		
 		// A slightly more complex test using real data
@@ -356,7 +400,7 @@ public class MapGraph {
 		System.out.println("Test 3 using utc: Dijkstra should be 37 and AStar should be 10");
 		testroute = testMap.dijkstra(testStart,testEnd);
 		testroute2 = testMap.aStarSearch(testStart,testEnd);
-		
+		testroute3 = testMap.roadTypeSearch(testStart, testEnd);
 		
 		
 		/* Use this code in Week 3 End of Week Quiz */

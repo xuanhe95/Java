@@ -71,8 +71,11 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public void add(int index, E element ) 
 	{
 		// TODO: Implement this method
-		if( index > size || index < 0 ) {
+		if( index > size || index < 0) {
 			throw new IndexOutOfBoundsException();
+		}
+		if ( element == null ) {
+			throw new NullPointerException();
 		}
 		
 		//start with head node
@@ -110,7 +113,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	public E remove(int index) 
 	{
 		// TODO: Implement this method
-		if ( size == 0 || index >= size || index < 0 ) {
+		if ( size == 0 || index > size || index < 0 ) {
 			throw new IndexOutOfBoundsException();
 		}
 		// start with first node
@@ -146,6 +149,9 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		// TODO: Implement this method
 		if ( size == 0 || index >= size || index < 0 ) {
 			throw new IndexOutOfBoundsException();
+		}
+		if ( element == null ) {
+			throw new NullPointerException();
 		}
 		// start with first node
 		LLNode<E> oldNode = head.next;

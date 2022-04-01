@@ -113,10 +113,19 @@ public class MyLinkedListTester {
 		assertEquals("Remove: check a is correct ", 65, a);
 		assertEquals("Remove: check element 0 is correct ", (Integer)21, list1.get(0));
 		assertEquals("Remove: check size is correct ", 2, list1.size());
+
 		
 		// TODO: Add more tests here
 		try {
 			list1.remove(-1);
+			fail("Check out of bounds");
+		}
+		catch (IndexOutOfBoundsException e) {
+			
+		}
+		
+		try {
+			list1.remove(15);
 			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
@@ -174,6 +183,15 @@ public class MyLinkedListTester {
 		catch (IndexOutOfBoundsException e) {
 			
 		}
+		
+		try {
+			emptyList.add(0, null);
+			fail("Check can't add null");
+		}
+		catch (NullPointerException e) {
+			
+		}
+		
        
 		emptyList.add(0, 3);
 		assertEquals("AddAtIndex: check add at 0", (Integer)3, emptyList.get(0));

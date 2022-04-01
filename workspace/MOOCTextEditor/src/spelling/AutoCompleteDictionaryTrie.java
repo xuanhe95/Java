@@ -3,8 +3,6 @@ package spelling;
 import java.util.List;
 import java.util.Set;
 
-import org.fxmisc.undo.impl.UnlimitedChangeQueue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

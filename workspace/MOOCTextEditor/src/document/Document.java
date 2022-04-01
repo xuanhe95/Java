@@ -106,27 +106,6 @@ public abstract class Document {
 		
 	}
 	
-	protected int countSelfSyllables() {
-		//select vowels
-				List<String> vowels = getTokens("[aeiouAEIOU]+");
-				
-				//select last character with "y"
-				List<String> lastOnlyY = getTokens("[^aeiouAEIOU]y$");
-				
-				//select last character with "e" but not with "l";
-				List<String> lastOnlyE = getTokens("[^laeiouAEIOU]e$");
-				
-				if(lastOnlyE.size() > 0) {
-					return vowels.size() - 1;
-				}
-				else if(lastOnlyY.size() > 0) {
-					return vowels.size() + 1;
-				}
-				else {
-					return vowels.size();
-				}
-
-	}
 	
 	/** A method for testing
 	 * 

@@ -39,35 +39,34 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	public void train(String sourceText)
 	{
 		// TODO: Implement this method
-		
-		String[] words = sourceText.split("[ ]+");
-		starter = words[0];
-
-		
-		for( int i = 0; i < words.length ; i++ ) {
-			String curWord = words[i];
-			String nextWord;
-			if ( i == words.length - 1 ) {
-				nextWord = starter;
-			}
-			else {
-				nextWord = words[ i + 1 ];
-			}
+		if ( !sourceText.equals("") ) {
+			String[] words = sourceText.split("[ ]+");
+			starter = words[0];	
+			for( int i = 0; i < words.length ; i++ ) {
+				String curWord = words[i];
+				String nextWord;
+				if ( i == words.length - 1 ) {
+					nextWord = starter;
+				}
+				else {
+					nextWord = words[ i + 1 ];
+				}
 			
-			if ( !myMap.containsKey( curWord ) ) {
-				ListNode node = new ListNode( curWord );
-				node.addNextWord( nextWord );
+				if ( !myMap.containsKey( curWord ) ) {
+					ListNode node = new ListNode( curWord );
+					node.addNextWord( nextWord );
 				
-				myMap.put( curWord, node );
+					myMap.put( curWord, node );
+				}
+				else {
+					ListNode node = myMap.get( curWord );
+					node.addNextWord( nextWord );
+				}
 			}
-			else {
-				ListNode node = myMap.get( curWord );
-				node.addNextWord( nextWord );
-			}
-		}
 		
-		for( String word : myMap.keySet()) {
-			wordList.add( myMap.get(word) );
+			for( String word : myMap.keySet()) {
+				wordList.add( myMap.get(word) );
+			}
 		}
 	}
 	
@@ -75,12 +74,16 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	 * Generate the number of words requested.
 	 */
 	@Override
-	public String generateText(int numWords) {
+	public String generateText (int numWords) {
 	    // TODO: Implement this method
 		
-		String curWord = starter;
-		
 		String output = "";
+		if (starter == "" ) {
+			return output;
+		}
+		
+		String curWord = starter;
+
 		for ( int i = 0; i < numWords; i++ ) {
 			ListNode curNode = myMap.get( curWord );
 			String nextWord = curNode.getRandomNextWord(rnGenerator);
