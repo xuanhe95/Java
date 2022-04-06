@@ -133,7 +133,7 @@ public abstract class Graph {
 			
 			int degrees = neighbors.size();
 			int inDegrees = inNeighbors.size();
-			degreeSequence.add( degrees );
+			degreeSequence.add( degrees + inDegrees );
 		}
 		Collections.sort(degreeSequence, Collections.reverseOrder());
 		

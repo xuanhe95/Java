@@ -271,7 +271,7 @@ public class MapGraph {
 		while ( !queue.isEmpty()) {
 			curVertex = queue.poll();
 			GeographicPoint curPoint = curVertex.getLocation();
-			System.out.println( searchType + "	" + curVertex.getLocation() );
+			//System.out.println( searchType + "	" + curVertex.getLocation() );
 			nodeSearched.accept(curPoint);	//show points on the map
 
 			if ( !checked.contains(curPoint) ) {
